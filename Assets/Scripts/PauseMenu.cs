@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Script que controla el comportamiento del menú de pausa ingame.
 public class PauseMenu : MonoBehaviour
 {
+    [Header("Gameobject referenciado")]
     public GameObject menuPausa;
+
+    [Header("Botones del menú de pausa:")]
     public Button botonInicial;
     public Button botonSecundario;
-    public bool token;
-    // Start is called before the first frame update
+
+    private bool token;
+
     void Start()
     {
         token = false;
@@ -18,12 +23,15 @@ public class PauseMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)){
-            
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+
             Menu();
         }
     }
 
+    //Método encargado de mostrar u ocultar alternativamente el
+    //menú de pausa, de acuerdo al valor del token.
     public void Menu()
     {
         if (!token)
@@ -43,6 +51,9 @@ public class PauseMenu : MonoBehaviour
 
     }
 
+
+    //Función visible para el resto de clases. Se encarga de
+    //indicar si esta la partida en pausa.
     public bool getToken()
     {
         return token;

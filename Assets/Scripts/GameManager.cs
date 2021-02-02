@@ -3,14 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+//Clase que administra el control de escenas y salida del juego.
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("Singleton")]
+    public static GameManager sceneManager;
+
+    void Awake()
     {
-        
+
+        if (sceneManager == null)
+        {
+
+            sceneManager = this;
+            DontDestroyOnLoad(this.gameObject);
+
+
+        }
+        else
+        {
+            Destroy(this);
+        }
     }
 
+    //Función encargada de finalizar la ejecución de unity.
     public void TerminarJuego()
     {
         Application.Quit();
@@ -18,16 +34,6 @@ public class GameManager : MonoBehaviour
 
     public void CargarEscena()
     {
-        SceneManager.LoadScene(1);
-    }
-
-    public void CargarEscena0()
-    {
         SceneManager.LoadScene(0);
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

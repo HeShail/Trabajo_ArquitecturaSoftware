@@ -1,21 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//Script que sujeta el comportamiento del balón, atado a su rigidbody.
 public class TRIGGERPELOTA : MonoBehaviour {
+
+	[Header("Scripts invocados")]
 	public CHUTAR chutarscript;
-	private PartidoManager gameManager;
-	// Use this for initialization
-	void Start () {
-		gameManager = GameObject.Find("GameManager").GetComponent<PartidoManager>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+	//Función encargada de efectuar la recogida del balón,
+	//emparentando este al personaje jugador.
 	void OnTriggerEnter(Collider other)
 	{
-		if ((other.transform.tag == "Pelota")&& (gameManager.relocado()!= true)) {
+		if ((other.transform.tag == "Pelota")&& (PartidoManager.manager.relocado()!= true)) {
 			
 
 			Rigidbody PelotaRB = other.GetComponent<Rigidbody> ();
@@ -27,6 +23,8 @@ public class TRIGGERPELOTA : MonoBehaviour {
 		}
 
 	}
+
+	//Método que desactiva el atributo de posesión del balón al jugador.
 	void OnTriggerExit(Collider other)
 	{
 		if (other.transform.tag == "Pelota") {

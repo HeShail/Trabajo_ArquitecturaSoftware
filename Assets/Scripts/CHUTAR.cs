@@ -2,23 +2,40 @@
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
+
+//Clase que gestiona la mayor parte de la jugabilidad del personaje
+//a excepción del movimiento, centrada en chutar balonazos.
 public class CHUTAR : MonoBehaviour {
+
+	#region Atributos
+	[Header("Gameobjects implicados")]
 	public GameObject esliderP1;
 	public GameObject esliderP2;
-	public bool conBalon = false;
-	private float MaxfuerzaUp = 300;
-	private float minFuerza = 200;
 	public GameObject balon;
-	public bool Player2 = false;
-	private KeyCode miInput;
-	private int chutesP1;
-	private int chutesP2;
-	private float tiempoP1;
-	private float tiempoP2;
-	private float tiempoTotal;
+
+	[Header("Textos")]
 	public TextMeshProUGUI textochutesP1;
 	public TextMeshProUGUI textochutesP2;
 
+	[Header("Booleanos que determinan estados")]
+	public bool conBalon = false;
+	public bool Player2 = false;
+
+	//Atributos privados
+	//Temporizadores, medidores de fuerza y
+	//contadores de lanzamientos efecuados.
+	private KeyCode miInput;
+	private int chutesP1;
+	private int chutesP2;
+	private float MaxfuerzaUp = 300;
+	private float minFuerza = 200;
+	private float tiempoP1;
+	private float tiempoP2;
+	private float tiempoTotal;
+	#endregion
+
+
+	//Inicialización de atributos.
 	private void Start()
     {
 		esliderP2.SetActive(false);
@@ -39,7 +56,14 @@ public class CHUTAR : MonoBehaviour {
 			miInput = KeyCode.Return;
 		}
 
-        if ((conBalon)&&(GameObject.Find("HUD").GetComponent<PauseMenu>().getToken()!=true))
+		//Este siguiente bloque de código analiza si el juego está en pausa y procede a efectuar la
+		//carga de disparo y el lanzamiento de este a diferentes potencias,
+		//dependiendo del tiempo de carga.
+
+		//+++Activa y desactiva los sliders de potencia de disparo, dependiendo si la carga
+		//se está efecuando o no, respectivamente.
+		#region Código de disparo
+		if ((conBalon)&&(GameObject.Find("HUD").GetComponent<PauseMenu>().getToken()!=true))
 		{
 			tiempoTotal += Time.deltaTime;
 			if (Player2 == false)
@@ -118,10 +142,12 @@ public class CHUTAR : MonoBehaviour {
 			}
 
 		}
+        #endregion
 
+    }
 
-	}
-   
+	//Método encargado principalmente para el tratamiento de errores. Se aplica cada vez 
+	//que sea necesario quitar la posesión del balon a los jugadores
 	public void DejarBalon()
     {
         if (conBalon)
@@ -133,6 +159,8 @@ public class CHUTAR : MonoBehaviour {
 			conBalon = false;
 		}
 	}
+
+	//Función encargada de mostrar el medidor de disparo en el canvas de los jugadores.
 	private void DisparoCargado()
     {
 		if (Player2 == false)
@@ -145,11 +173,16 @@ public class CHUTAR : MonoBehaviour {
 			esliderP1.SetActive(false);
 			esliderP2.SetActive(true);
 		}
-		if (Player2 == false) esliderP1.GetComponent<Slider>().value += 0.02f;
-		else esliderP2.GetComponent<Slider>().value += 0.02f;
+		if (Player2 == false) esliderP1.GetComponent<Slider>().value += 0.004f;
+		else esliderP2.GetComponent<Slider>().value += 0.004f;
 	}
 
-	public int getChutesP1()
+    //Funciones Get. Emiten el número de golpes al balón por jugador y
+    //la posesión del balón registrada.
+    #region Funciones Get
+
+
+    public int getChutesP1()
     {
 		return chutesP1;
     }
@@ -170,4 +203,8 @@ public class CHUTAR : MonoBehaviour {
 	{
 		return tiempoTotal;
 	}
+
+    #endregion
+
+
 }

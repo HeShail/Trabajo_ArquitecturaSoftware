@@ -2,24 +2,33 @@
 using System.Collections;
 
 using UnityEngine.UI;
+
+//Clase que gestiona completamente el movimiento de los personajes controlables.
 public class TerceraPersonaControl : MonoBehaviour {
-	Transform thisTransform ;
-	public float speed = 6.0F;
-	public float rotateSpeed = 10.0F;
-	public float gravity = 20.0F;
+    
+	#region Atributos
+    [Header("Gameobjects dependientes")]
 	public GameObject panelPlayer;
-	public Transform ref_piv_cam;
 	public GameObject sliderResistenciaP1;
 	public GameObject sliderResistenciaP2;
 
+	[Header("Velocidades")]
+	public float speed = 6.0F;
+	public float rotateSpeed = 10.0F;
+	public float gravity = 20.0F;
+
+	[Header("Vectores")]
+	public Transform ref_piv_cam;
 	private Vector3 moveDirection = Vector3.zero;
+	Transform thisTransform;
+
+	[Header("Identificador de player")]
 
 	public bool SOYPLAYERUNO = true;
-		
 
+	[Header("Animator")]
 	public Animator anim;
-	//collider ataques
-
+	#endregion
 
 	void Start(){
 		thisTransform = GetComponent<Transform>();
@@ -34,7 +43,7 @@ public class TerceraPersonaControl : MonoBehaviour {
 		CharacterController controller = GetComponent<CharacterController> ();
 		if (controller.isGrounded) {
 
-				//Relativo a Camara
+				//Movimiento de los personajes relativo a cámara.
 			if (SOYPLAYERUNO == true) {
 				moveDirection = ref_piv_cam.TransformDirection (new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical")));
 				
@@ -47,7 +56,7 @@ public class TerceraPersonaControl : MonoBehaviour {
 
 
 
-			//ROTACION
+			//Rotación de los personajes relativo a cámara.
 		if (SOYPLAYERUNO == true) {
 			Vector3 horizontalVelocity = ref_piv_cam.TransformDirection (new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical")));
 		
@@ -76,16 +85,16 @@ public class TerceraPersonaControl : MonoBehaviour {
 			anim.SetFloat ("magnitud", magnitud); 
 
 		}
-		//APLICA MOVIMIENTO
 
+		//Aplicación de movimiento y función de sprint
 		if ((Input.GetKey(KeyCode.LeftShift)) && SOYPLAYERUNO)
         {
 			sliderResistenciaP1.SetActive(true);
 
 			if (sliderResistenciaP1.GetComponent<Slider>().value > 0.01f)
             {
-				moveDirection *= 1.6f;
-				sliderResistenciaP1.GetComponent<Slider>().value -= 0.01f;
+				moveDirection *= 1.2f;
+				sliderResistenciaP1.GetComponent<Slider>().value -= 0.004f;
 			}
 
         }
@@ -99,8 +108,8 @@ public class TerceraPersonaControl : MonoBehaviour {
 			sliderResistenciaP2.SetActive(true);
 			if (sliderResistenciaP2.GetComponent<Slider>().value > 0.01f)
             {
-				moveDirection *= 1.6f;
-				sliderResistenciaP2.GetComponent<Slider>().value -= 0.01f;
+				moveDirection *= 1.2f;
+				sliderResistenciaP2.GetComponent<Slider>().value -= 0.004f;
 			}
 		}
 		else

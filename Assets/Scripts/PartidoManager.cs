@@ -4,37 +4,80 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+//Script que controla el grueso de la secuencia de ejecución del juego.
+//Incluye la mecánica de gol, recolocación de personajes, animación de 
+//mensajes y activación de audioclips y textos.
 public class PartidoManager : MonoBehaviour
 {
-    public Animator tiempoDescanso;
-    public Animator VictoriaP1;
-    public Animator VictoriaP2;
-    public AudioSource golSound;
-    public AudioSource pitidoT;
-    public AudioSource pitidoFin;
-    public TextMeshProUGUI textCrono;
-    public TextMeshProUGUI textMarcador;
-    [Range(-20.0f,20.0f)] public float escalaTiempo;
-    private bool primeraParte;
-    private string cosa;
-    private float startTime;
-    private bool pausado;
+    #region Atributos
+    [Header("Scripts de jugadores")]
+    public CHUTAR scriptChutar;
+    public CHUTAR scriptChutar2;
+
+    [Header("Posiciones iniciales")]
     public Transform posicionBalon;
     public Transform posicionP1;
     public Transform posicionP2;
-    private int puntosP1;
-    private int puntosP2;
+
+    [Header("Gameobjects")]
     public GameObject player1;
     public GameObject player2;
     public GameObject balon;
-    public CHUTAR scriptChutar;
-    public CHUTAR scriptChutar2;
+
+    [Header("Animators de mensajes")]
+    public Animator tiempoDescanso;
+    public Animator VictoriaP1;
+    public Animator VictoriaP2;
+    public Animator golAnim;
+
+    [Header("Audio Sources")]
+    public AudioSource golSound;
+    public AudioSource pitidoT;
+    public AudioSource pitidoFin;
+
+    [Header("Textos")]
+    public TextMeshProUGUI textCrono;
+    public TextMeshProUGUI textMarcador;
     public TextMeshProUGUI textoPosesionP1;
     public TextMeshProUGUI textoPosesionP2;
-    private bool relocando;
+
+    [Header("Velocidad de partido")]
+    [Range(-20.0f, 20.0f)] public float escalaTiempo;
+    private float startTime;
     private float tiempoPosesion;
-    public Animator golAnim;
-    // Start is called before the first frame update
+
+    private bool pausado;
+    private bool relocando;
+    private bool primeraParte;
+    private int puntosP1;
+    private int puntosP2;
+    private string cosa;
+
+    [Header("Singleton")]
+    public static PartidoManager manager;
+
+    #endregion
+
+
+    //Tratamiento del singleton de PartidoManager
+    void Awake()
+    {
+
+        if (manager == null)
+        {
+
+            manager = this;
+            DontDestroyOnLoad(this.gameObject);
+
+
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+
+    //Inicialización de atributos.
     void Start()
     {
         Time.timeScale = 1f;
@@ -46,14 +89,15 @@ public class PartidoManager : MonoBehaviour
         tiempoPosesion = 0.2f;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         tiempoPosesion = scriptChutar.getTiempoTotal() + scriptChutar2.getTiempoTotal();
         textoPosesionP1.text = (scriptChutar.getTiempoP1() / tiempoPosesion* 100).ToString("00") + " %";
         textoPosesionP2.text = ((tiempoPosesion-scriptChutar.getTiempoP1()) / tiempoPosesion * 100).ToString("00") + " %";
 
-
+        //Bloque de código que actualiza el marcador de tiempo, interrumpiendo el tiempo
+        //cuando se anota gol o termina la primera parte del juego.
         if (!pausado)
         {
             float t = (Time.time - startTime)*escalaTiempo;
@@ -70,6 +114,9 @@ public class PartidoManager : MonoBehaviour
                     cosa = minutos.ToString("00") + ":" + segundos.ToString("00");
                 }
             }
+
+            //Secuencia de código que trata el término del primer tiempo.
+            //Libera el balón, ralentiza el tiempo e invoca una recolocación.
             if ((minutos == 10)&& primeraParte)
             {
                 pitidoT.Play();
@@ -85,10 +132,9 @@ public class PartidoManager : MonoBehaviour
                 tiempoDescanso.SetTrigger("tiempo");
             }else if ((minutos == 21) && !primeraParte)
             {
-                
                 if (puntosP1 > puntosP2) VictoriaP1.SetTrigger("victoria"); else VictoriaP2.SetTrigger("victoria");
                 
-                Invoke("SalirAMenu", 4f);
+                Invoke("CargarJuego", 4f);
             }
             textCrono.text = cosa;
             if (minutos == 19f)
@@ -99,12 +145,12 @@ public class PartidoManager : MonoBehaviour
         }
     }
 
-    public void SalirAMenu()
-    {
-        GameObject.Find("GameManager").GetComponent<GameManager>().CargarEscena0();
-    }
+    //Función que tramita el gol. Anota y ejecuta el audioclip de gol,
+    //ralentiza el tiempo, libera el balón y llama a la función de recolocación
+    //de los jugadores y esférico.
     public void GOL()
     {
+        GameObject.Find("FireworksPooler").GetComponent<FireworksPooler>().Descarga();
         golSound.Play();
         pausado = true;
         relocando = true;
@@ -118,6 +164,10 @@ public class PartidoManager : MonoBehaviour
         textMarcador.text = puntosP1.ToString() + " - " + puntosP2.ToString();
     }
 
+    //Método que devuelve a los personajes de los jugadores y al balón
+    //a las posiciones iniciales del inicio del encuentro. Para ello necesita detener el balón
+    //lo antes posible(drag), desactivar los character controller y modificar los vectores
+    //de posición y rotación.
     public void Relocar()
     {
 
@@ -138,11 +188,20 @@ public class PartidoManager : MonoBehaviour
         balon.GetComponent<Rigidbody>().drag = 0.5f;
     }
 
+    //Función que devuelve el trail al balón en un lapso de tiempo
+    //para no presentar un latigazo en el campo tras su reubicación. 
     public void DevolverTrail()
     {
         pausado = false;
         balon.GetComponent<TrailRenderer>().time = 0.2f;
     }
+
+    //Llamada a singleton de GameManager para cargar el juego de nuevo.
+    public void CargarJuego()
+    {
+        GameManager.sceneManager.CargarEscena();
+    }
+
     public bool relocado()
     {
         return relocando;
