@@ -453,6 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   porteriaP1: 0
+  gameManager: {fileID: 280012893}
 --- !u!1 &78908771
 GameObject:
   m_ObjectHideFlags: 0
@@ -4452,7 +4453,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: da6fcd1443ace3a498f7eef09e388071, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.174
+  m_Volume: 0.568
   m_Pitch: 1.5
   Loop: 0
   Mute: 0
@@ -4751,6 +4752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   porteriaP1: 1
+  gameManager: {fileID: 280012893}
 --- !u!1 &616780947
 GameObject:
   m_ObjectHideFlags: 0
@@ -5273,13 +5275,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectPooled: {fileID: 8710403202521100950, guid: 8096cf3d81906be458e358fe128a7562, type: 3}
+  pooledAmount: 50
+  willGrow: 0
   pooledObjects: []
   lanzador1: {fileID: 435056199}
   lanzador2: {fileID: 914417050}
   lanzador3: {fileID: 1652447618}
   lanzador4: {fileID: 1041494345}
-  pooledAmount: 50
-  willGrow: 0
+  botonRojo: 0
+  cont: 0
 --- !u!4 &661982741
 Transform:
   m_ObjectHideFlags: 0

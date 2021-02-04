@@ -23,7 +23,6 @@ public class TerceraPersonaControl : MonoBehaviour {
 	Transform thisTransform;
 
 	[Header("Identificador de player")]
-
 	public bool SOYPLAYERUNO = true;
 
 	[Header("Animator")]

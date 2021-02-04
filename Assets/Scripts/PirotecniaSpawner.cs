@@ -6,17 +6,14 @@ using UnityEngine;
 public class PirotecniaSpawner : MonoBehaviour
 {
     float i;
-    public bool activarFuegos;
-
     private void Start()
     {
         i = 0;
-        activarFuegos = false;
     }
 
     //Función encargada de extraer un objeto del pool, asignarle el tranform del gameobject
     //y liberarlo.
-    public void FUEGO()
+    private void FUEGO()
     {
 
             GameObject obj = GameObject.Find("FireworksPooler").GetComponent<FireworksPooler>().GetPooledObject();
@@ -33,7 +30,6 @@ public class PirotecniaSpawner : MonoBehaviour
     //++Controla la velocidad de salida de los objetos del pool.
     public void Andanada()
     {
-        activarFuegos = true;
         if (i >= 0.2f)
         {
             FUEGO();
